@@ -22,53 +22,41 @@ const Landing: React.FC = () => {
           </span>
         ))}
       </div>
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        {[...Array(14)].map((_, i) => (
-          <span
-            key={i}
-            className={`absolute text-xl md:text-2xl ${
-              i % 2 === 0 ? "text-green-400" : "text-blue-500"
-            } animate-float`}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDuration: `${6 + Math.random() * 6}s`,
-            }}
-          >
-            {i % 2 === 0 ? "🍃" : "💧"}
-          </span>
-        ))}
-      </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-6 sm:px-12">
-        <h1 className="absolute top-[1%] text-5xl sm:text-5xl md:text-5xl font-extrabold text-white drop-shadow-2xl">
+        <h1 className="absolute top-[3%] text-6xl sm:text-7xl md:text-8xl font-extrabold text-white drop-shadow-2xl tracking-wide">
           Volcomm.
         </h1>
 
-        <div className="w-[400px] h-[380px] sm:w-[500px] sm:h-[500px] md:w-[600px] md:h-[600px]">
+        <p className="absolute top-[15%] text-center text-lg sm:text-xl md:text-2xl text-green-100 max-w-3xl drop-shadow-md leading-relaxed">
+          Bridging communities with volunteers to create meaningful impact.
+          Small acts of kindness become collective movements, transforming lives
+          and strengthening bonds.
+        </p>
+
+        <div className="w-[400px] h-[380px] sm:w-[500px] sm:h-[500px] md:w-[600px] md:h-[600px] mt-36 sm:mt-40 md:mt-48">
           <Spline scene="https://prod.spline.design/I2sOEtZMa4A4ORAZ/scene.splinecode" />
         </div>
 
-        <p className="absolute top-[60%] mt-6 text-lg sm:text-l md:text-2xl text-green-50 max-w-2xl drop-shadow-md">
-          A platform where communities connect, volunteers gather, and together
-          we create lasting impact. we turn small acts of kindness into
-          collective movements that transform lives and strengthen communities.
-        </p>
-
-        <div className="mt-8 flex flex-col sm:flex-row gap-4 sm:gap-6">
+        <div className="mt-12 flex flex-col sm:flex-row gap-4 sm:gap-6">
           <Link
             to="/signup"
-            className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-all duration-300 shadow-lg"
+            className="bg-green-600 text-white px-10 py-4 rounded-xl font-semibold hover:bg-green-700 transition-all duration-300 shadow-lg"
           >
             Join as Volunteer
           </Link>
           <Link
             to="/login"
-            className="bg-white/10 backdrop-blur-md text-green-200 border border-green-400 px-8 py-4 rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 shadow-md"
+            className="bg-white/10 backdrop-blur-md text-green-200 border border-green-400 px-10 py-4 rounded-xl font-semibold hover:bg-white/20 transition-all duration-300 shadow-md"
           >
             Login
           </Link>
         </div>
+
+        <p className="mt-8 text-sm sm:text-base text-green-200 opacity-80 max-w-md">
+          Already part of our community? Login to track your impact and explore
+          new opportunities.
+        </p>
       </div>
 
       <style>{`

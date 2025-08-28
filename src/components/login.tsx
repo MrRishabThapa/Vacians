@@ -3,11 +3,12 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login: React.FC = () => {
-  const notify = () => toast("Wow so easy!");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState(""); // NEW
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -16,19 +17,22 @@ const Login: React.FC = () => {
     setError("");
 
     try {
-      await signInWithEmailAndPassword(auth, email, password).then(
-        () => notify
-      );
-      <ToastContainer />;
+      await signInWithEmailAndPassword(auth, email, password);
+      toast.success("Login successful! 🎉", { position: "top-right" });
+
+      // Save username in localStorage (or you can use context/state)
+      localStorage.setItem("username", username);
+
       navigate("/dashboard");
     } catch (err: any) {
-      alert(`Login failed: ${err.message}`);
+      toast.error(`Login failed: ${err.message}`, { position: "top-right" });
       setError(err.message);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-950 via-green-900 to-green-800 px-6">
+      {/* background animation */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         {[...Array(14)].map((_, i) => (
           <span
@@ -53,6 +57,20 @@ const Login: React.FC = () => {
         </h2>
 
         <form onSubmit={handleLogin} className="space-y-5">
+          <div>
+            <label className="block text-green-200 font-medium mb-1">
+              Username
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="w-full px-4 py-3 rounded-lg bg-white/5 border border-green-400 text-green-100 placeholder-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="Enter your username"
+            />
+          </div>
+
           <div>
             <label className="block text-green-200 font-medium mb-1">
               Email
@@ -101,6 +119,8 @@ const Login: React.FC = () => {
           </a>
         </p>
       </div>
+
+      <ToastContainer />
 
       <style>{`
         @keyframes float {

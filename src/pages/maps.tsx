@@ -1,173 +1,162 @@
-import { useEffect, useRef, useState } from "react";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
-import { mapLocations } from "../data/mockData";
+// src/pages/maps.tsx
+import { useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import type { LatLngTuple } from "leaflet";
+import { mapLocations, opportunitiesData } from "../data/mockData";
 
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || "";
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+});
 
-type Campaign = {
-  id: number;
-  name: string;
-  coordinates: [number, number];
-  urgency: "high" | "medium" | "low";
-};
+function LocateButton({
+  setUserLocation,
+  setShowCampaigns,
+}: {
+  setUserLocation: (pos: LatLngTuple) => void;
+  setShowCampaigns: (show: boolean) => void;
+}) {
+  const map = useMap();
+  const [scanning, setScanning] = useState(false);
 
-function getDistance(lat1: number, lng1: number, lat2: number, lng2: number) {
-  const toRad = (v: number) => (v * Math.PI) / 180;
-  const R = 6371; // km
-  const dLat = toRad(lat2 - lat1);
-  const dLng = toRad(lng2 - lng1);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-
-export default function MapView() {
-  const mapContainer = useRef<HTMLDivElement | null>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const [nearbyCampaigns, setNearbyCampaigns] = useState<Campaign[]>([]);
-
-  useEffect(() => {
-    if (!mapContainer.current) return;
-    if (map.current) return;
-
-    try {
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: "mapbox://styles/mapbox/streets-v11",
-        center: [85.324, 27.7172],
-        zoom: 12,
-      });
-
-      map.current.addControl(new mapboxgl.NavigationControl());
-
-      mapLocations.forEach((camp) => {
-        const [lng, lat] = camp.coordinates;
-        if (lng < -180 || lng > 180 || lat < -90 || lat > 90) return; // skip invalid
-
-        const color =
-          camp.urgency === "high"
-            ? "red"
-            : camp.urgency === "medium"
-            ? "yellow"
-            : "green";
-
-        new mapboxgl.Marker({ color })
-          .setLngLat([lng, lat])
-          .setPopup(new mapboxgl.Popup().setHTML(`<b>${camp.name}</b>`))
-          .addTo(map.current!);
-      });
-
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          const { latitude, longitude } = position.coords;
-
-          map.current?.flyTo({ center: [longitude, latitude], zoom: 14 });
-
-          new mapboxgl.Marker({ color: "blue" })
-            .setLngLat([longitude, latitude])
-            .setPopup(new mapboxgl.Popup().setHTML("<b>You are here</b>"))
-            .addTo(map.current!);
-
-          const nearby = mapLocations
-            .filter((camp) => {
-              const [lng, lat] = camp.coordinates;
-              if (lng < -180 || lng > 180 || lat < -90 || lat > 90)
-                return false;
-              return getDistance(latitude, longitude, lat, lng) <= 5;
-            })
-            .map((camp) => ({
-              ...camp,
-              coordinates: [camp.coordinates[0], camp.coordinates[1]] as [
-                number,
-                number
-              ],
-              urgency: camp.urgency as "high" | "medium" | "low",
-            }));
-          setNearbyCampaigns(nearby);
-        });
-      }
-    } catch (err) {
-      console.error("Mapbox init failed:", err);
+  const handleClick = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation not supported in your browser.");
+      return;
     }
-  }, []);
+
+    setScanning(true);
+
+    setTimeout(() => {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const userPos: LatLngTuple = [
+          pos.coords.latitude,
+          pos.coords.longitude,
+        ];
+        map.flyTo(userPos, 14);
+        setUserLocation(userPos);
+        setShowCampaigns(true);
+        setScanning(false);
+      });
+    }, 1800);
+  };
 
   return (
-    <div className="bg-green-50 min-h-screen p-6 md:p-12">
-      <div className="max-w-4xl mx-auto text-center mb-6">
-        <h1 className="text-3xl md:text-4xl font-bold text-green-900 mb-2">
-          Volunteer Campaign Map
-        </h1>
-        <p className="text-green-700 text-lg">
-          Discover local campaigns by location and urgency. Stay involved and
-          make an impact!
-        </p>
-      </div>
+    <button
+      onClick={handleClick}
+      className={`absolute top-4 right-4 z-[1000] px-6 py-3 rounded-xl text-lg font-semibold shadow-lg transition ${
+        scanning
+          ? "bg-green-500 animate-pulse text-white"
+          : "bg-blue-600 hover:bg-blue-700 text-white"
+      }`}
+    >
+      {scanning ? "Scanning..." : "Find Nearby Campaigns"}
+    </button>
+  );
+}
 
-      <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden relative">
-        <div ref={mapContainer} className="w-full h-[600px] md:h-[700px]" />
+export default function MapsPage() {
+  const [userLocation, setUserLocation] = useState<LatLngTuple | null>(null);
+  const [showCampaigns, setShowCampaigns] = useState(false);
 
-        {nearbyCampaigns.length > 0 && (
-          <div className="absolute top-4 left-4 bg-white rounded-xl shadow-lg p-4 max-w-sm z-10">
-            <h3 className="font-bold text-green-900 mb-2">Nearby Campaigns</h3>
-            <ul className="space-y-2">
-              {nearbyCampaigns.map((camp) => (
-                <li key={camp.id} className="flex justify-between items-center">
-                  <span>{camp.name}</span>
+  return (
+    <div className="min-h-screen bg-green-50 p-6">
+      <div className="max-w-6xl mx-auto rounded-2xl shadow-lg overflow-hidden border-4 border-green-500 mb-6 relative">
+        <MapContainer
+          center={[27.7172, 85.324]}
+          zoom={10}
+          style={{ height: "400px", width: "100%" }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution="&copy; OpenStreetMap contributors"
+          />
+
+          {userLocation && (
+            <Marker position={userLocation}>
+              <Popup>You are here 📍</Popup>
+            </Marker>
+          )}
+
+          {showCampaigns &&
+            mapLocations.map((loc) => (
+              <Marker key={loc.id} position={loc.coordinates as LatLngTuple}>
+                <Popup>
+                  <strong>{loc.name}</strong>
+                  <br />
+                  Urgency:{" "}
                   <span
-                    className={`w-3 h-3 rounded-full ${
-                      camp.urgency === "high"
-                        ? "bg-red-500"
-                        : camp.urgency === "medium"
-                        ? "bg-yellow-400"
-                        : "bg-green-500"
+                    className={`font-bold ${
+                      loc.urgency === "high"
+                        ? "text-red-600"
+                        : loc.urgency === "medium"
+                        ? "text-yellow-600"
+                        : "text-green-600"
                     }`}
-                  ></span>
-                </li>
-              ))}
-            </ul>
-          </div>
+                  >
+                    {loc.urgency}
+                  </span>
+                </Popup>
+              </Marker>
+            ))}
+
+          <LocateButton
+            setUserLocation={setUserLocation}
+            setShowCampaigns={setShowCampaigns}
+          />
+        </MapContainer>
+      </div>
+
+      {/* Campaigns Text / Placeholder */}
+      <div className="text-center mb-6">
+        {!showCampaigns ? (
+          <h2 className="text-gray-400 font-extrabold text-4xl sm:text-5xl">
+            No Campaigns Detected
+          </h2>
+        ) : (
+          <h2 className="text-green-900 font-extrabold text-4xl sm:text-5xl">
+            Campaigns Detected
+          </h2>
         )}
-
-        <div className="absolute bottom-4 right-4">
-          <button
-            onClick={() => {
-              if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((position) => {
-                  map.current?.flyTo({
-                    center: [
-                      position.coords.longitude,
-                      position.coords.latitude,
-                    ],
-                    zoom: 14,
-                  });
-                });
-              }
-            }}
-            className="bg-green-700 hover:bg-green-600 text-white font-semibold px-5 py-3 rounded-full shadow-lg transition-colors duration-200"
-          >
-            See Campaigns Nearby
-          </button>
-        </div>
       </div>
 
-      {/* Legend */}
-      <div className="max-w-5xl mx-auto mt-6 flex justify-center gap-6 flex-wrap">
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-full bg-red-500 border border-red-700"></div>
-          <span className="text-green-800 font-medium">High Urgency</span>
+      {/* Nearby Campaign Cards */}
+      {showCampaigns && (
+        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {opportunitiesData.map((camp) => (
+            <div
+              key={camp.id}
+              className="bg-white rounded-2xl shadow-md p-6 border border-green-200 hover:shadow-xl transition"
+            >
+              <h3 className="text-lg font-semibold text-green-700 mb-2">
+                {camp.title}
+              </h3>
+              <p className="text-sm text-gray-700 mb-2">{camp.description}</p>
+              <p className="text-xs text-gray-500 mb-2">
+                📍 {camp.location} | {camp.date} | {camp.duration}
+              </p>
+              <span
+                className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium ${
+                  camp.urgency === "high"
+                    ? "bg-red-100 text-red-700"
+                    : camp.urgency === "medium"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : "bg-green-100 text-green-700"
+                }`}
+              >
+                {camp.urgency.toUpperCase()} URGENCY
+              </span>
+            </div>
+          ))}
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-full bg-yellow-400 border border-yellow-600"></div>
-          <span className="text-green-800 font-medium">Medium Urgency</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-full bg-green-500 border border-green-700"></div>
-          <span className="text-green-800 font-medium">Low Urgency</span>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

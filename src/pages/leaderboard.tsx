@@ -1,32 +1,42 @@
 import { useState } from "react";
 import PerksGuide from "./perksGuide";
 
-const mockUsers = [
+// TYPES
+type User = {
+  id: number;
+  name: string;
+  points: number;
+  avatar: string;
+};
+
+// MOCK DATA
+const mockUsers: User[] = [
   { id: 1, name: "Alex Chauhan", points: 2450, avatar: "AC" },
   { id: 2, name: "Marina Karki", points: 2180, avatar: "MR" },
   { id: 3, name: "David Khadka", points: 1950, avatar: "DK" },
   { id: 4, name: "Sarah Ban", points: 1720, avatar: "SJ" },
   { id: 5, name: "Michael Luitel", points: 1580, avatar: "MB" },
   { id: 6, name: "Eshan Limbu", points: 1420, avatar: "EW" },
-  { id: 7, name: "James Davis", points: 1250, avatar: "JD" },
-  { id: 8, name: "Lisa Anderson", points: 1100, avatar: "LA" },
-  { id: 9, name: "Ryan Thompson", points: 950, avatar: "RT" },
-  { id: 10, name: "Sophie Miller", points: 820, avatar: "SM" },
-  { id: 11, name: "Kevin Lee", points: 680, avatar: "KL" },
-  { id: 12, name: "Rachel Green", points: 540, avatar: "RG" },
-  { id: 13, name: "Tom Harris", points: 420, avatar: "TH" },
-  { id: 14, name: "Anna Clark", points: 310, avatar: "AC" },
-  { id: 15, name: "Jake Martinez", points: 180, avatar: "JM" },
+  { id: 7, name: "Arjun Shah", points: 1250, avatar: "AS" },
+  { id: 8, name: "Ganesh Dulal", points: 1100, avatar: "GD" },
+  { id: 9, name: "Utsav Raj Ojha", points: 950, avatar: "URO" },
+  { id: 10, name: "Ronik Koirala", points: 820, avatar: "RK" },
+  { id: 11, name: "Khushi Karn", points: 680, avatar: "KK" },
+  { id: 12, name: "Samriddhi Khadgi", points: 540, avatar: "SK" },
+  { id: 13, name: "Haris Ali Khan", points: 420, avatar: "HAK" },
+  { id: 14, name: "Hitesh Chaudhary", points: 310, avatar: "HC" },
+  { id: 15, name: "Keshab Kumar Chauhan", points: 180, avatar: "KKC" },
 ];
 
 // UTILITY FUNCTIONS
 function getTier(points: number) {
   if (points >= 5000)
-    return { name: "God of Kindness", color: "#4CAF50", icon: "👑" };
-  if (points >= 3000) return { name: "Platinum", color: "#00C0FF", icon: "💎" };
-  if (points >= 2000) return { name: "Gold", color: "#FFD700", icon: "🥇" };
-  if (points >= 1000) return { name: "Silver", color: "#C0C0C0", icon: "🥈" };
-  return { name: "Bronze", color: "#CD7F32", icon: "🥉" };
+    return { name: "Community Guardian", color: "#4CAF50", icon: "👑" };
+  if (points >= 3000)
+    return { name: "Kind Soul", color: "#00C0FF", icon: "🌳" };
+  if (points >= 2000) return { name: "Blossom", color: "#FFD700", icon: "🌸" };
+  if (points >= 1000) return { name: "Sprout", color: "#C0C0C0", icon: "🌿" };
+  return { name: "Seedling", color: "#CD7F32", icon: "🌱" };
 }
 
 function getProgressToNext(points: number) {
@@ -52,7 +62,6 @@ function getProgressToNext(points: number) {
   return { current: points, max: 1000, percentage: (points / 1000) * 100 };
 }
 
-// COMPONENTS
 function Avatar({ initials }: { initials: string }) {
   return (
     <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full bg-gradient-to-br from-green-500 to-green-400 text-white flex items-center justify-center font-bold text-lg md:text-xl lg:text-2xl mx-auto">
@@ -74,7 +83,7 @@ function ProgressBar({ percentage }: { percentage: number }) {
   );
 }
 
-function TopThreeCard({ user, position }: { user: any; position: number }) {
+function TopThreeCard({ user, position }: { user: User; position: number }) {
   const tier = getTier(user.points);
   const progress = getProgressToNext(user.points);
 
@@ -113,7 +122,7 @@ function TopThreeCard({ user, position }: { user: any; position: number }) {
   );
 }
 
-function LeaderboardRow({ user }: { user: any }) {
+function LeaderboardRow({ user }: { user: User }) {
   const tier = getTier(user.points);
   const progress = getProgressToNext(user.points);
 
@@ -140,7 +149,7 @@ function LeaderboardRow({ user }: { user: any }) {
   );
 }
 
-function Profile({ user, onBack }: { user: any; onBack: () => void }) {
+function Profile({ user, onBack }: { user: User; onBack: () => void }) {
   return (
     <div className="min-h-screen bg-green-50 p-5">
       <div className="max-w-3xl mx-auto bg-white border-4 border-green-500 rounded-2xl shadow-lg overflow-hidden">
@@ -171,7 +180,7 @@ function Profile({ user, onBack }: { user: any; onBack: () => void }) {
 }
 
 export default function Leaderboard() {
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showPerks, setShowPerks] = useState(false);
 
   const topThree = mockUsers.slice(0, 3);

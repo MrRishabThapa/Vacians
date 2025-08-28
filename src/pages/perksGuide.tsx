@@ -1,17 +1,33 @@
-// src/pages/perksGuide.tsx
 type PerksGuideProps = {
   userPoints: number;
 };
 
 export default function PerksGuide({ userPoints }: PerksGuideProps) {
   const tiers = [
-    { name: "Bronze", min: 0, max: 999, icon: "🥉" },
-    { name: "Silver", min: 1000, max: 1999, icon: "🥈" },
-    { name: "Gold", min: 2000, max: 2999, icon: "🥇" },
-    { name: "Platinum", min: 3000, max: 4999, icon: "💎" },
-    { name: "God of Kindness", min: 5000, max: Infinity, icon: "👑" },
+    { name: "Seedling", min: 0, max: 999, icon: "🌱", color: "bg-green-100" },
+    {
+      name: "Sprout",
+      min: 1000,
+      max: 1999,
+      icon: "🌿",
+      color: "bg-emerald-100",
+    },
+    { name: "Blossom", min: 2000, max: 2999, icon: "🌸", color: "bg-lime-100" },
+    {
+      name: "Kind Soul",
+      min: 3000,
+      max: 4999,
+      icon: "🌳",
+      color: "bg-teal-100",
+    },
+    {
+      name: "Community Guardian",
+      min: 5000,
+      max: Infinity,
+      icon: "🍃",
+      color: "bg-cyan-100",
+    },
   ];
-
   const currentTier = tiers.find(
     (tier) => userPoints >= tier.min && userPoints <= tier.max
   );
@@ -24,7 +40,6 @@ export default function PerksGuide({ userPoints }: PerksGuideProps) {
           {currentTier?.icon} {currentTier?.name}
         </span>
       </h2>
-
       <div className="space-y-4">
         {tiers.map((tier) => {
           const isActive = tier.name === currentTier?.name;
@@ -50,6 +65,7 @@ export default function PerksGuide({ userPoints }: PerksGuideProps) {
           );
         })}
       </div>
+         
     </div>
   );
 }

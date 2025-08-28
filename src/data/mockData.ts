@@ -1,3 +1,9 @@
+import money from "../assets/money.jpg";
+import food from "../assets/food.jpg";
+import beach from "../assets/beach.jpg";
+import leader from "../assets/leadership.jpg";
+import volunter from "../assets/women-volunteers.jpg";
+import snow from "../assets/snow.jpg";
 export const opportunitiesData = [
   {
     id: 1,
@@ -74,11 +80,11 @@ export const opportunitiesData = [
 export const newsData = [
   {
     id: 1,
-    title: "Community Garden Project Receives $50K Grant",
+    title: "Community Garden Project Receives Rs.50K Grant",
     excerpt:
       "Local community garden initiative receives major funding to expand operations and serve more families in need.",
     date: "January 8, 2024",
-    image: "🌱",
+    image: money,
   },
   {
     id: 2,
@@ -86,7 +92,7 @@ export const newsData = [
     excerpt:
       "This year's holiday food drive collected over 10,000 items, the highest amount in the program's history.",
     date: "January 5, 2024",
-    image: "🥫",
+    image: food,
   },
   {
     id: 3,
@@ -94,7 +100,7 @@ export const newsData = [
     excerpt:
       "Volunteers came together last weekend to remove hundreds of pounds of debris from our local beaches.",
     date: "January 3, 2024",
-    image: "🏖️",
+    image: beach,
   },
   {
     id: 4,
@@ -102,7 +108,7 @@ export const newsData = [
     excerpt:
       "Connecting at-risk youth with positive role models through our new comprehensive mentorship initiative.",
     date: "December 30, 2023",
-    image: "👥",
+    image: leader,
   },
   {
     id: 5,
@@ -110,7 +116,7 @@ export const newsData = [
     excerpt:
       "Join us in February to celebrate our amazing volunteers and their contributions to the community.",
     date: "December 28, 2023",
-    image: "🎉",
+    image: volunter,
   },
   {
     id: 6,
@@ -118,114 +124,51 @@ export const newsData = [
     excerpt:
       "Thanks to generous donations, we've collected 1,200 winter coats for families in need this season.",
     date: "December 25, 2023",
-    image: "🧥",
-  },
-];
-
-export const leaderboardData = [
-  {
-    id: 1,
-    name: "Sarah Johnson",
-    contributions: 47,
-    points: 2840,
-  },
-  {
-    id: 2,
-    name: "Michael Chen",
-    contributions: 42,
-    points: 2650,
-  },
-  {
-    id: 3,
-    name: "Emily Rodriguez",
-    contributions: 38,
-    points: 2380,
-  },
-  {
-    id: 4,
-    name: "David Thompson",
-    contributions: 35,
-    points: 2150,
-  },
-  {
-    id: 5,
-    name: "Lisa Williams",
-    contributions: 32,
-    points: 2020,
-  },
-  {
-    id: 6,
-    name: "James Miller",
-    contributions: 29,
-    points: 1890,
-  },
-  {
-    id: 7,
-    name: "Amanda Davis",
-    contributions: 26,
-    points: 1680,
-  },
-  {
-    id: 8,
-    name: "Robert Garcia",
-    contributions: 24,
-    points: 1520,
-  },
-  {
-    id: 9,
-    name: "Jennifer Brown",
-    contributions: 21,
-    points: 1360,
-  },
-  {
-    id: 10,
-    name: "Christopher Lee",
-    contributions: 19,
-    points: 1240,
+    image: snow,
   },
 ];
 
 export const mapLocations = [
   {
     id: 1,
-    name: "Central Park Community Garden",
-    coordinates: [40.7829, -73.9654],
+    name: "Community Garden Cleanup",
+    coordinates: [26.669, 87.28], // near Itahari
     urgency: "high",
   },
   {
     id: 2,
-    name: "Downtown Food Bank",
-    coordinates: [40.7589, -73.9851],
+    name: "Food Bank Volunteer",
+    coordinates: [26.6645, 87.2875],
     urgency: "high",
   },
   {
     id: 3,
-    name: "Sunset Beach",
-    coordinates: [40.7282, -74.0776],
+    name: "Beach Cleanup Drive",
+    coordinates: [26.6702, 87.285],
     urgency: "medium",
   },
   {
     id: 4,
-    name: "Sunrise Senior Center",
-    coordinates: [40.7505, -73.9934],
+    name: "Senior Center Reading Program",
+    coordinates: [26.6675, 87.2901],
     urgency: "low",
   },
   {
     id: 5,
-    name: "Community Youth Center",
-    coordinates: [40.7614, -73.9776],
+    name: "Youth Mentorship Program",
+    coordinates: [26.662, 87.281],
     urgency: "medium",
   },
   {
     id: 6,
-    name: "Happy Paws Animal Shelter",
-    coordinates: [40.7411, -73.9897],
+    name: "Animal Shelter Support",
+    coordinates: [26.6688, 87.2785],
     urgency: "high",
   },
   {
     id: 7,
-    name: "Koshi river Cleanup Site",
-    coordinates: [40.711, -739.897],
+    name: "Koshi River Cleanup Site",
+    coordinates: [26.6655, 87.2865],
     urgency: "medium",
   },
 ];
